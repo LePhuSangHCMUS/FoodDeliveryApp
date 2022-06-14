@@ -1,11 +1,16 @@
 import { View, Text, SafeAreaView, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
-import { COLORS, icons, FONTS, SIZES } from '../../consts';
+import { COLORS, icons, FONTS, SIZES, routeNames } from '../../consts';
 import { restaurantData, categoryData, initialCurrentLocation } from "./dummy"
 import Restaurant from '../Restaurant';
+import { useNavigation } from '@react-navigation/native';
 export default function Home() {
 
+
+  const navigation = useNavigation();
+  const { navigate } = navigation;
   const [categorySelected, setCategorySelected] = useState(1)
+  const [currentLocation, setCurrentLocation] = useState(initialCurrentLocation)
 
 
   const handleChangeCategory = (id) => {
@@ -57,7 +62,15 @@ export default function Home() {
     const { id, name, photo, duration, rating, categories,priceRating } = props;
     return <TouchableOpacity style={{
       marginBottom: SIZES.padding
-    }}>
+    }}
+      onPress={() => {
+        navigate(routeNames.RESTAURANT, {
+          item:props,
+          currentLocation
+       }) 
+    }}
+    
+    >
 
       {/* Image  */}
       <View style={{
@@ -134,6 +147,7 @@ export default function Home() {
         {
           [1, 2, 3].map(price => {
             return <Text
+              key={price}
               style={{
                 ...FONTS.body3,
                 color:(price <= priceRating)?COLORS.black:COLORS.darkgray,
@@ -173,7 +187,7 @@ export default function Home() {
         }}
       ><Text style={{
         ...FONTS.h3
-      }}>{initialCurrentLocation.streetName}</Text></View>
+      }}>{currentLocation.streetName}</Text></View>
       < Image style={{
         width: 25,
         height: 25,
